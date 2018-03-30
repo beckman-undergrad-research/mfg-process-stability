@@ -27,7 +27,7 @@ x.sd / (x.AMR/1.128)
 
 # geerate 5 binomial samples
 x1 <- rbinom(100, 50, 0.9)
-x2 <- rbinom(50, 50, 0.7)
+x2 <- c(rbinom(100, 50, 0.6), rbinom(50, 45, 0.9))
 x3 <- rbinom(100,50 , 0.9)
 x4 <- rbinom(150, 50, 0.8)
 x5 <- rbinom(100, 50, 0.8)
@@ -94,3 +94,9 @@ plot(x = c(x1rat,x2rat, x3rat, x4rat, x5rat), y= c(x1.mean, x2.mean, x3.mean,
                                                    x4.mean, x5.mean), main =
        "Yeild versus Stability", ylab = "Average Yeild", xlab = "Stability Ratio")
 ## how to get the regression line?
+
+
+## Notes: 
+# 
+# - Avg Yield as a proportion (scale 0 to 1 on y axis)
+# - Add one or two unstable processes; can just be a mixture of two binomials; samp <- c(rbinom(35, 50, 0.7), rbinom(20, 45, 0.9))
