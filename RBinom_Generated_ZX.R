@@ -27,17 +27,26 @@ x.sd / (x.AMR/1.128)
 
 #################################################################
 
+ptm <- Sys.time()
+
 # repeat code below NREP times
 set.seed(100)
-NREP <- 10
-N <- 100
-n <- 50
-p <- 0.9
-FBniom <- matrix(NA, NREP, N)
+NREP <- 10000  # rows
+N <- 100    # columns
+n <- 50     # sample size for binomial process
+p <- 0.5    # prob of success for binomial process
+
+FBniom <- matrix(NA, NREP, N)  # initialize matrix
 BMean <- rep(NA, NREP)
 BSd <- rep(NA, NREP)
+
+### Think about creating a separate table with the summary statistics necessary for each chart
+###   columns = each calculated value (mean, sd, ucl, etc)
+###   rows = each simulated process
+###   there should be an index column of some kind that links back to the simulated matrix
+
 for (i in 1:NREP) {
-  x <- rbinom(N,n,p)
+  x <- rbinom(N,n,p) / n
   FBniom[i,1:N] <- x
   BMean[i] <- mean(x)
   BSd[i] <- sd(x)
@@ -58,7 +67,7 @@ x.iter
 
 # x.iter[1:NREP, 1:N] <- c(NA, FBniom[1:NREP,1:(N-1)])
 #for (i in 1:NREP){
-#  x.MR <- abs(FBniom[1:NREP,1:N] - x.iter[1:NREP,1:N])
+#  x.MR <- abs(FBniom[i,1:N] - x.iter[i,1:N])
 #  
 #}
 
@@ -77,6 +86,7 @@ for (i in 1:NREP){
   x.AMR[i,] <- mean(x.MR[i,], na.rm = TRUE)
 }
 x.AMR
+
 # mean(x.MR[,2], na.rm = TRUE)
 # x.MR
 # (4+2+2+3+1+1+3+0+1+1)/10
@@ -87,7 +97,7 @@ UCL <- BMean + 3*(x.AMR/1.128)
 LCL <- BMean - 3*(x.AMR/1.128)
 
 # Calcualte stability ratio and convert yeild to proportion
-x.meanrat <- BMean/n
+x.meanrat <- BMean
 x.meanrat
 x.rat <- BSd/(x.AMR/1.128)
 x.rat <- t(x.rat)
@@ -95,7 +105,7 @@ x.rat
 
 # add a unstable process
 x1 <- c(rbinom(100, 50, 0.6), rbinom(50, 45, 0.9))
-x2 <- c(rbinom(70, 50, 0.7), rbinom(50, 45, 0.4))
+x2 <- c(rbinom(70, 50, 0.7), rbinom(50, 45, 0.9))
 
 # Calcualte everything for x1
 N1 <- length(x1)
@@ -120,20 +130,28 @@ LCL2 <- x2.mean - 3*(x2.AMR/1.128)
 # Calculate ratio for unstable
 x1rat <- x1.sd / (x1.AMR/1.128)
 x2rat <- x2.sd / (x2.AMR/1.128)
-x1.meanrat <- x1.mean/150
-x2.meanrat <- x2.mean/120
+x1.meanrat <- x1.mean/length(x1)
+x2.meanrat <- x2.mean/length(x2)
 
-# plot the graph
+# plot the graph  [why is yield so low for mixture process?]
 plot(x = c(x.rat,x1rat,x2rat) , y= c(x.meanrat,x1.meanrat,
                                      x2.meanrat), main =
        "Yeild versus Stability", ylab = "Average Yeild", 
      xlab = "Stability Ratio")
+
+# to correct ink saturation, maybe switch to ggplot2 & use `alpha` to 
+#    control transparency for `geom_point()`
+
+Sys.time() - ptm
+
 
 plot(FBniom[1,1:N], ylim = c(UCL[1] + 2, LCL[1] - 2))
 lines(FBniom[1,1:N])
 abline(h = BMean[1], col = "blue")
 abline(h= UCL[1], col = "red")
 abline(h = LCL[1], col = "red")
+
+
 
 #################################################################
 
