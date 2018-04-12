@@ -134,13 +134,34 @@ x1.meanrat <- x1.mean/length(x1)
 x2.meanrat <- x2.mean/length(x2)
 
 # plot the graph  [why is yield so low for mixture process?]
-plot(x = c(x.rat,x1rat,x2rat) , y= c(x.meanrat,x1.meanrat,
-                                     x2.meanrat), main =
+plot(c(x.rat,x1rat,x2rat),c(x.meanrat,x1.meanrat,x2.meanrat), main =
        "Yeild versus Stability", ylab = "Average Yeild", 
      xlab = "Stability Ratio")
 
 # to correct ink saturation, maybe switch to ggplot2 & use `alpha` to 
 #    control transparency for `geom_point()`
+library(ggplot2)
+bgene <- data.frame(avg.yeild= c(x.meanrat,x1.meanrat,x2.meanrat),
+                    sd = c(UCL,UCL1,UCL2), ucl = c(UCL,UCL1,UCL2), 
+                    lcl = c(LCL, LCL1, LCL2),
+                    avg.movingran = c(x.AMR, x1.AMR, x2.AMR),
+                    stab.ratio = c(x.rat,x1rat,x2rat)) # generate dataframe
+bgene
+
+bgene.gg <- ggplot(bgene)  +  geom_point(aes(stab.ratio, avg.yeild,
+                                             color = 'avg.yeild')) + 
+  geom_smooth(aes(stab.ratio, avg.yeild)) + 
+  labs(title="Proportional Yeild vs. Stability Ratio", 
+       x="Stability Ratio", y="Average Yeild")
+
+## change plot with more nice looking title and axis
+bgene.gg1 <- bgene.gg + theme(plot.title=element_text(size=20, face="bold"), 
+                              axis.text.x=element_text(size=8), 
+                              axis.text.y=element_text(size=8),
+                              axis.title.x=element_text(size=15),
+                              axis.title.y=element_text(size=15)) +   
+  scale_color_discrete(name="Yeild vs Stab.ratio")
+print(bgene.gg1) # print the result
 
 Sys.time() - ptm
 
