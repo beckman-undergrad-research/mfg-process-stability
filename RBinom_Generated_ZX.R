@@ -148,11 +148,21 @@ bgene <- data.frame(avg.yeild= c(x.meanrat,x1.meanrat,x2.meanrat),
                     stab.ratio = c(x.rat,x1rat,x2rat)) # generate dataframe
 bgene
 
-bgene.gg <- ggplot(bgene)  +  geom_point(aes(stab.ratio, avg.yeild,
-                                             color = 'avg.yeild')) + 
+bgene.gg <- 
+  ggplot(bgene)  +  
+  geom_point(aes(stab.ratio, avg.yeild, color = 'avg.yeild', alpha = 1/100)) + 
   geom_smooth(aes(stab.ratio, avg.yeild)) + 
   labs(title="Proportional Yeild vs. Stability Ratio", 
        x="Stability Ratio", y="Average Yeild")
+
+## geom_hex example
+library(hexbin)
+bgene.gg <- 
+  ggplot(bgene)  +  
+  geom_hex(aes(x = stab.ratio, y = avg.yeild)) + 
+  labs(title="Proportional Yeild vs. Stability Ratio", 
+       x="Stability Ratio", y="Average Yeild")
+
 
 ## change plot with more nice looking title and axis
 bgene.gg1 <- bgene.gg + theme(plot.title=element_text(size=20, face="bold"), 
